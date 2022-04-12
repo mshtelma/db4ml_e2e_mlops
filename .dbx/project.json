@@ -3,7 +3,7 @@
         "default": {
             "profile": "e2fieldeng",
             "workspace_dir": "/Shared/dbx/db4ml_e2e_mlops",
-            "artifact_location": "dbfs:/Shared/dbx/projects/db4ml_e2e_mlops"
+            "artifact_location": "dbfs:/Users/dbx/projects/db4ml_e2e_mlops"
         }
     }
 }
