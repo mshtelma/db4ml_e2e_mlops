@@ -148,8 +148,6 @@ def telco_churn_scoring_pandas(
     spark: SparkSession,
     params: Dict[str, str],
 ):
-    print(scoring_df.columns)
-    print(telco_churn)
     preds = telco_churn.predict(scoring_df)
     scoring_df["predictions"] = preds
     sdf = spark.createDataFrame(scoring_df)

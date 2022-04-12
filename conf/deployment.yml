@@ -1,12 +1,18 @@
 custom:
   basic-cluster-props: &basic-cluster-props
     spark_version: "10.4.x-cpu-ml-scala2.12"
+    spark_conf:
+      spark.master: "local[*, 4]"
+      spark.databricks.cluster.profile: "singleNode"
 
   basic-static-cluster: &basic-static-cluster
     new_cluster:
       <<: *basic-cluster-props
-      num_workers: 1
+      num_workers: 0
       node_type_id: "i3.xlarge"
+      driver_node_type_id: "i3.xlarge"
+      custom_tags:
+        ResourceClass: SingleNode
 
 # please note that we're using FUSE reference for config file, hence we're going to load this file using its local FS path
 environments:
