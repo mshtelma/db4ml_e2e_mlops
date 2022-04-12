@@ -1,0 +1,65 @@
+name: db4ml_e2e_mlops
+stage: Staging
+mlflow_experiment_path: /Shared/dbx/telco_churn
+modules:
+  - telco_churn.telco_churn
+
+
+source_tables:
+  telco_churn_train_source:
+    table: field_demos_retail.customer_churn_bronze
+  telco_churn_scoring:
+    table: field_demos_retail.customer_churn_bronze
+
+models:
+  telco_churn:
+    flavour: sklearn
+    model_type: classifier
+    target_column: churn
+    test_size: 0.2
+    params:
+      - name: n_estimators
+        default: 100
+      - name: max_depth
+        default: 8
+      - name: min_samples_leaf
+        default: 1
+      - name: max_features
+        default: auto
+
+pipelines:
+  telco_churn_train:
+    type: model_train
+    train_options:
+      model_name: telco_churn
+      train_dataset: telco_churn_dataset
+      promote_in_registry: true
+      initial_stage: Staging
+    variables:
+      - variable: source_df
+        value: telco_churn_train_source
+    split: true
+
+  telco_churn_scoring_spark:
+    type: spark_batch
+    models:
+      - model_name: telco_churn
+        model_selection: model_registry
+    variables:
+      - variable: source_df
+        value: telco_churn_scoring
+    params:
+      format: delta
+      table_name: msh_telco_churn_out_spark
+
+  telco_churn_scoring_pandas:
+    type: spark_batch
+    models:
+      - model_name: telco_churn
+        model_selection: model_registry
+    variables:
+      - variable: source_df
+        value: telco_churn_scoring
+    params:
+      format: delta
+      table_name: msh_telco_churn_out_pandas
